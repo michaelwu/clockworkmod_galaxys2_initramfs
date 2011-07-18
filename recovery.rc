@@ -65,6 +65,9 @@ on post-fs
     write /proc/sys/kernel/sched_compat_yield 1
     write /proc/sys/kernel/sched_child_runs_first 0
 
+    # let recovery handle mounting /system
+    umount /system
+
 on boot
 
     ifup lo
