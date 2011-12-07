@@ -590,6 +590,8 @@ on boot
 
     class_start default
 
+service checktype /check-sysimage.sh
+    oneshot
 
 ## Daemon processes to be run by init.
 ##
@@ -636,12 +638,6 @@ on property:persist.service.adb.enable=1
 on property:persist.service.adb.enable=0
     stop adbd
 
-service servicemanager /system/bin/servicemanager
-    user system
-    critical
-    onrestart restart zygote
-    onrestart restart media
-
 service vold /system/bin/vold
     socket vold stream 0660 root mount
     socket usbstorage stream 0660 root mount
@@ -671,13 +667,6 @@ service mobex-daemon /system/bin/npsmobex
 service DR-deamon /system/bin/drexe
     user root
     group system radio inet net_raw     
-
-service zygote /system/bin/app_process -Xzygote /system/bin --zygote --start-system-server
-    socket zygote stream 666
-    onrestart write /sys/android_power/request_state wake
-    onrestart write /sys/power/state on
-    onrestart restart media
-    onrestart restart netd
 
 service media /system/bin/mediaserver
     user media
@@ -919,3 +908,43 @@ on property:encryption.bootmode=remount
     start immvibed
     start media
     start tvout 
+
+service servicemanager-a /system/bin/servicemanager
+    user system
+    critical
+    disabled
+    onrestart restart zygote
+    onrestart restart media
+
+service zygote /system/bin/app_process -Xzygote /system/bin --zygote --start-system-server
+    socket zygote stream 666
+    disabled
+    onrestart write /sys/android_power/request_state wake
+    onrestart write /sys/power/state on
+    onrestart restart media
+    onrestart restart netd
+
+on property:sysimg.android=1
+    start servicemanager-a
+    start zygote
+
+service servicemanager-g /system/bin/servicemanager
+    disabled
+    user system
+    critical
+#    onrestart restart media
+
+service b2g /system/b2g/b2g
+    disabled
+    onrestart restart media
+
+service b2gdialer /system/bin/b2g-dialer-daemon
+    disabled
+    socket rilb2g stream 666 root system
+    user root
+    group radio cache inet misc audio sdcard_rw net_admin net_raw log
+
+on property:sysimg.gonk=1
+    start servicemanager-g
+    start b2gdialer
+    start b2g
