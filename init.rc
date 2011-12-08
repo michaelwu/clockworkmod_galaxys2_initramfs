@@ -655,10 +655,14 @@ service netd /system/bin/netd
 service debuggerd /system/bin/debuggerd
 
 service ril-daemon /system/bin/rild
-    socket rild stream 666 root radio
+    disabled
+    socket rild stream 660 root radio
     socket rild-debug stream 660 radio system
     user root
     group radio cache inet misc audio sdcard_rw log
+
+on property:sysimg.android=1
+    start ril-daemon
 
 service mobex-daemon /system/bin/npsmobex
     user system
@@ -944,7 +948,15 @@ service b2gdialer /system/bin/b2g-dialer-daemon
     user root
     group radio cache inet misc audio sdcard_rw net_admin net_raw log
 
+service ril-daemon-b2g /system/bin/rild
+    disabled
+    socket rild stream 666 root radio
+    socket rild-debug stream 660 radio system
+    user root
+    group radio cache inet misc audio sdcard_rw log
+
 on property:sysimg.gonk=1
     start servicemanager-g
+    start ril-daemon-b2g
     start b2gdialer
     start b2g
