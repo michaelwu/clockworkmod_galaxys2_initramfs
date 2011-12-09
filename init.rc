@@ -144,7 +144,7 @@ on post-fs
 	exec apply_system_policy /dev/block/mmcblk0p11 vfat
     
     # once everything is setup, no need to modify /
-    mount rootfs rootfs / ro remount
+    # mount rootfs rootfs / ro remount
 
     # We chown/chmod /data again so because mount is run as root + defaults
     # use movinand second partition as /data.
