@@ -942,9 +942,10 @@ service b2g /system/b2g/b2g
     disabled
     onrestart restart media
 
-service b2gdialer /system/bin/b2g-dialer-daemon
+service rilproxy /system/bin/rilproxy
     disabled
-    socket rilb2g stream 666 root system
+    socket rilproxy stream 666 root system
+    socket rilproxyd stream 666 root system
     user root
     group radio cache inet misc audio sdcard_rw net_admin net_raw log
 
@@ -958,5 +959,5 @@ service ril-daemon-b2g /system/bin/rild
 on property:sysimg.gonk=1
     start servicemanager-g
     start ril-daemon-b2g
-    start b2gdialer
+    start rilproxy
     start b2g
