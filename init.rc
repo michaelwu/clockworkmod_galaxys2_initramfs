@@ -1000,3 +1000,16 @@ on property:sysimg.gonk=1
     start ril-daemon-b2g
     start rilproxy
     start b2g
+
+service mount-sdcard /sbin/mountvol sdcard
+    oneshot
+    disabled
+
+service mount-emmc /sbin/mountvol emmc
+    oneshot
+    disabled
+
+on property:init.svc.vold=running
+    start mount-sdcard
+    start mount-emmc
+
