@@ -1,0 +1,26 @@
+#!/system/bin/sh
+
+# only runs in b2g image
+[ "`getprop sysimg.gonk`" = "1" ] || exit 1
+
+# volume label to be mounted
+[ -n "$1" ] || exit 2
+label=$1
+
+if [ "`getprop init.svc.vold`" = "running" ]; then
+    count=0
+    while [ $count -lt 20 ]; do
+        # check if target volume is in idle stage and mount it
+        # example vold output: 110 sdcard /mnt/sdcard 1
+        status=`vdc volume list 2>/dev/null | awk "/^110 $label / { print \\\$4; }"`
+        if [ "$status" = "1" ]; then
+            vdc volume mount $label
+            exit $?
+        fi
+
+        count=$((count+1))
+        sleep 1
+    done
+fi
+
+exit 3
