@@ -39,6 +39,7 @@ loglevel 3
 # create mountpoints
     mkdir /mnt 0775 root system
     mkdir /mnt/sdcard 0000 system system
+    mkdir /mnt/emmc 0000 system system
 
 # Create cgroup mount point for cpu accounting
     mkdir /acct
@@ -999,3 +1000,16 @@ on property:sysimg.gonk=1
     start ril-daemon-b2g
     start rilproxy
     start b2g
+
+service mount-sdcard /sbin/mountvol sdcard
+    oneshot
+    disabled
+
+service mount-emmc /sbin/mountvol emmc
+    oneshot
+    disabled
+
+on property:init.svc.vold=running
+    start mount-sdcard
+    start mount-emmc
+
