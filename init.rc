@@ -653,7 +653,9 @@ service netd /system/bin/netd
 
 service debuggerd /system/bin/debuggerd
 
-service httpd /system/xbin/mongoose -p 7777 -t 3 -r / -m .appcache=text/cache-manifest,.mp4=video/mp4
+service httpd /system/bin/busybox httpd -f -p 127.0.0.1:7777 -h /
+    user root
+    group inet cache misc net_admin net_raw log
 
 service ril-daemon /system/bin/rild
     disabled
